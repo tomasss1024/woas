@@ -23,6 +23,7 @@ Wiki on a Stick (Woas) is a complete wiki in a single HTML file that works in ev
 
 
 Some plugins: https://github.com/tomasss1024/woas_plugins
+
 Themes: https://github.com/tomasss1024/woas_themes
 
 It's new fork from https://sourceforge.net/projects/woas/.
