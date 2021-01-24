@@ -8646,7 +8646,8 @@ woas.ns_listing = function(root, flat_arr, folds) {
 	}
 
 	var order = [], root_title = "/No Namespace/", fold_n = 0, opt_n = 0, s = "",
-		list_id = "woas_"+_random_string(6)+"_", f, i, il, it, oi, ns, fs, fold_id;
+		list_id = "woas_"+_random_string(6)+"_", f, i, il, it, oi, ns, fs, fold_id,
+		folds_time,page_in_f,foi;
 	flat_arr.sort();
 	// sort folds content and folds
 	// do not produce the header if listing is transcluded
@@ -8689,11 +8690,18 @@ woas.ns_listing = function(root, flat_arr, folds) {
 				ns = "[[Tagged::"+oi+"|"+oi+"]]";
 			}
 			it = folds[oi].length;
+			foi= folds[oi];
+			folds_time=[];
+			for (page_in_f in foi) {
+				if (typeof foi[page_in_f]==='string') 
+					folds_time.push("[["+folds[oi][page_in_f]+"]]&nbsp; <"+"span style=\"font-size: smaller;\">"+this.last_modified(page_mts[woas.page_index(folds[oi][page_in_f])],true)+"<"+"/span>");
+			}
 			s += "<"+"div"+" class=\"woas_list_heading\">"+ns+"&nbsp;&nbsp;<" +
 				"a class=\"woas_list_link\" title=\"Toggle page display\" onclick=\"d$.toggle('" +
 				fold_id+"')\">"+it+" page"+(it > 1 ? "s" : "")+"<"+"/a>\n<"+"/div>\n" +
 				"<"+"div style=\""+dsp(fs === 2)+"\" id=\""+fold_id+"\">\n<" + 
-				"div class=\"woas_list\">\n[["+folds[oi].join("]]\n[[")+"]]<"+"/div><"+"/div>\n";
+				//"div class=\"woas_list\">\n[["+folds[oi].join("]]\n[[")+"]]<"+"/div><"+"/div>\n";
+				"div class=\"woas_list\">\n"+folds_time.join("\n")+"<"+"/div><"+"/div>\n";
 		}
 		// finish up
 		s += "<"+"/div>\n"+
@@ -15458,7 +15466,8 @@ woas._search_load = function() {
 		hl = '<\/span> <span class="woas_search_highlight">',
 		li = '<li><a class="woas_link" title="" onclick="woas.go_to(\'%s\')">'+
 			'%s<\/a>%s<\/li>',
-
+		page_ltime = '&nbsp; <span style="font-size: smaller;">%s</span>',
+	    
 		// TODO: add these to i18n if search doesn't become single page
 		fnd_t = 'Found in %s title%s',
 		fnd_p = 'Found %s time%s in %s page%s',
@@ -15512,7 +15521,7 @@ woas._search_load = function() {
 						function(str) {
 							return '<span class="woas_search_highlight">'+str+
 								'<\/span>';
-						}), '') + '\n');
+						}), page_ltime.sprintf(this.last_modified(page_mts[woas.page_index(tmp)],true))+'') + '\n');
 				}
 				out.push('<\/ul>\n');
 			}
@@ -15542,8 +15551,8 @@ woas._search_load = function() {
 					}
 					total += count;
 					// output page
-					out.push(li.sprintf(cbs.title, cbs.title, fnd_n
-						.sprintf(count, count > 1 ? 's' : '')) + r.join(''));
+					out.push(li.sprintf(cbs.title, cbs.title, page_ltime.sprintf(this.last_modified(page_mts[woas.page_index(cbs.title)],true)) +
+						fnd_n.sprintf(count, count > 1 ? 's' : '')) + r.join(''));
 				}
 			}
 		}
